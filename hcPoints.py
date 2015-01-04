@@ -128,8 +128,7 @@ def hcPoints(obs, cens):
     assert len(obs) == len(cens)
     cens = numpy.bool8(cens)
     obs = numpy.array(obs)
-    pp = numpy.array(obs)  #seems like best way to create an array to fill with length = obs
-
+    pp = numpy.random.rand(len(obs))
     if not any(cens):
         pp = ppoints(obs)
     else:
@@ -139,4 +138,3 @@ def hcPoints(obs, cens):
         hcPPointsCen = hc_ppoints_cen(obs, cens, cn)
         pp[cens] = hcPPointsCen
     return(pp)
-def main()
