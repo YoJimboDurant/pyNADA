@@ -8,6 +8,8 @@ I have not incorporated other functionality into the program yet, but would like
   * a plotting method that will allow for display of the uncensored data and the regression line (and the imputed values)
   * methods to calculate mean, standard deviation, and standard error of mean
   * method to calculate confidence intervals using either bootstrapping or some other method appropriate when bootstrapping is infeasible due to small numbers.
+  * the current tranformation assumes log-normal data (log foward transform, exponential back transform). I would like to add the ability to specify other transformations.
+  * currently the main() does not work, and the function ros must be called from within python.  
 
 for other details of ROS, see help file for ROS which can be found at http://www.inside-r.org/packages/cran/NADA/docs/ros
 
