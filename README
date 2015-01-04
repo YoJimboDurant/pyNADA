@@ -1,0 +1,38 @@
+This python program is an attempt to translate the R function ros from the package NADA (Lee 2013) into python 2. The function accepts 2 arguments - 
+     obs: a list or numpy array of numbers
+     cens: a boolean or list of 0,1 to indicate if obs values are censored (i.e. less than)
+The expected return is a array containing the uncensored obs values, and the ros-imputed values for the censored values. 
+
+I have not incorporated other functionality into the program yet, but would like to add:
+  * data.frame method to return a data.frame type object similar to ros, which will contain obs, cens, plotting position and imputed values. 
+  * a plotting method that will allow for display of the uncensored data and the regression line (and the imputed values)
+  * methods to calculate mean, standard deviation, and standard error of mean
+  * method to calculate confidence intervals using either bootstrapping or some other method appropriate when bootstrapping is infeasible due to small numbers.
+
+for other details of ROS, see help file for ROS which can be found at http://www.inside-r.org/packages/cran/NADA/docs/ros
+
+
+References:
+Lopaka Lee (2013). NADA: Nondetects And Data Analysis for
+  environmental data. R package version 1.5-6.
+  http://CRAN.R-project.org/package=NADA
+
+Lee and Helsel (2005) Statistical analysis of environmental data
+  containing multiple detection limits: S-language software for
+  regression on order statistics, Computers in Geoscience vol. 31,
+  pp. 1241-1248.
+
+Lee and Helsel (2005) Baseline models of trace elements in major
+  aquifers of the United States. Applied Geochemistry vol. 20, pp.
+  1560-1570.
+
+Dennis R. Helsel (2005), Nondetects And Data Analysis: John Wiley
+  and Sons, New York.
+
+Dennis R. Helsel (1990), Less Than Obvious: Statistical Methods
+ for, Environmental Science and Technology, vol.24, no. 12, pp.
+ 1767-1774
+
+Dennis R. Helsel and Timothy A. Cohn (1988), Estimation of
+ descriptive statistics for multiply censored water quality data,
+ Water Resources Research vol. 24, no. 12, pp.1997-2004
