@@ -1,13 +1,17 @@
 #!/usr/bin/python2.7.6 -tt
+
 import sys
+import warnings
+
 import numpy
-import hcPoints
 from scipy.stats import norm
 from scipy import stats
 
+import hcPoints
+import pyNADA.entry.plugin
 
 # ros is basic skeleton at this point. It needs flexible transformation added, but for now
-# it uses natural log for foward transformation and exponent for reverse. 
+# it uses natural log for foward transformation and exponent for reverse.
 
 def ros(obs, cens):
     # insert more defensive programming stuff here.
@@ -15,11 +19,11 @@ def ros(obs, cens):
     cens = numpy.bool8(cens)
     assert len(obs) == len(cens)
     if len(obs[cens])/len(obs) > 0.8:
-        print "warning: Input > 80% censored, results are tenuous.\n"
-    
+        warnings.warn("warning: Input > 80% censored, results are tenuous.", warnings.UserWarning)
+
     ix = obs > max(obs[numpy.logical_not(cens)])
     if any(ix):
-        print "Dropped censored values that exceed max of uncensored values.\n"
+        warnings.warn("Dropped censored values that exceed max of uncensored values.", warnings.UserWarning)
         obs = obs[numpy.logical_not(ix)]
         cens = cens[numpy.logical_not(ix)]
     ix = obs.argsort()
@@ -37,17 +41,30 @@ def ros(obs, cens):
     modeled[cens] = predicted
     return(modeled)
 
-def main():
-    # this does not work - I need a way to get a set of numbers in from the command line?
-    obs = sys.argv([1])
-    cens = sys.argv([2])
-    ros(obs, cens)
+class ROSEntry(pyNADA.entry.plugin.Plugin):
+    @classmethod
+    def registerSubparser(cls, parent):
+        import argparse # forces minimum python version of 2.7
 
-# standard boilerplate:
+        parser = parent.add_parser('ros', help='Run ros from the command line')
+        parser.set_defaults(subcommand=ROSEntry())
 
-if __name__ == '__main__':
-    main()
+        parser.add_argument('files', nargs='*', help='CSV files containing the observations or - for stdin.')
+        parser.add_argument('--selector', dest='selector', default='*',
+            help='A glob pattern that is used to select rows by the "sample number" column.')
 
+    def __call__(self, args):
+        import csv
+        import fileinput
+        import itertools
+        import re
+        import fnmatch
 
-    
+        selector = re.compile(fnmatch.translate(args.selector))
 
+        obs, cens = zip(
+            *itertools.imap(lambda row: (float(row['obs']), int(row['cens'])),
+                itertools.ifilter(lambda row: selector.match(row['sample number']),
+                    csv.DictReader(fileinput.input(args.files)))))
+
+        print ros(obs, cens)

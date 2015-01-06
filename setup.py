@@ -25,5 +25,14 @@ setup(
 
     install_requires=['numpy', 'scipy'],
     packages=find_packages(),
-    include_package_data=True
+    include_package_data=True,
+
+    entry_points={
+      'console_scripts' : [
+        'pyNADA = pyNADA.entry.main:main'
+      ],
+      'pyNADA.cmdline' : [
+        'ros = pyNADA.ros:ROSEntry'
+      ]
+    }
 )
