@@ -7,6 +7,8 @@ import numpy
 from scipy.stats import norm
 from scipy import stats
 
+import pandas as pd
+
 import hcPoints
 import pyNADA.entry.plugin
 
@@ -15,15 +17,15 @@ import pyNADA.entry.plugin
 
 def ros(obs, cens):
     # insert more defensive programming stuff here.
-    obs = numpy.array(obs, dtype=float)
-    cens = numpy.bool8(cens)
+    obs = pd.Series(obs)
+    cens = pd.Series(cens, dtype='bool8')
     assert len(obs) == len(cens)
-    if len(obs[cens])/len(obs) > 0.8:
-        warnings.warn("warning: Input > 80% censored, results are tenuous.", warnings.UserWarning)
+#    if len(obs[cens])/float(len(obs)) > 0.8:
+#        warnings.warn("warning: Input > 80% censored, results are tenuous.")
 
     ix = obs > max(obs[numpy.logical_not(cens)])
     if any(ix):
-        warnings.warn("Dropped censored values that exceed max of uncensored values.", warnings.UserWarning)
+#        warnings.warn("Dropped censored values that exceed max of uncensored values.")
         obs = obs[numpy.logical_not(ix)]
         cens = cens[numpy.logical_not(ix)]
     ix = obs.argsort()
