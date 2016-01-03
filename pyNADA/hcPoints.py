@@ -33,14 +33,15 @@ def ppoints(n):
 # P_j   = the probability of exceeding the jth threshold
 
 def cohn(obs, cens):
-    obs = numpy.array(obs)
-    cens = numpy.bool8(cens)
+    import pandas as pd
+    # obs = pd.Series([obs])
+    # cens = pd.Series([cens], dtype='bool8')
     uncen = obs[numpy.logical_not(cens)]
     cen = obs[cens]
     # A = B = C = P
 
     limit = numpy.unique(cen)
-    a = len(uncen[uncen < limit[1]])
+    a = len(uncen[uncen < limit[0]])
     if a > 0:
         limit = numpy.append(0, limit)
     # Get upper end values for A, B, C then use loops to get the other values.
@@ -57,7 +58,7 @@ def cohn(obs, cens):
     A.append(A_0)
     A = numpy.array(A)
     # calculate B
-    B_1 = [[a <= limit[j] for a in uncen] for j in i]
+    B_1 = [[a <= limit[j] for a in obs] for j in i]
     B_1 = [sum(b) for b in B_1]
     B_2 = [[a == limit[j] for a in uncen] for j in i]
     B_2 = [sum(b) for b in B_2]
@@ -70,6 +71,7 @@ def cohn(obs, cens):
     for i in i:
         P[i] = P[i+1] + ((float(A[i])/(A[i] + B[i])) * (1 - P[i + 1]))
     P = numpy.array(P)
+    #print([A,B,C,P,limit])
     return([A, B, C, P, limit])
 
 #calculates ploting positing for uncensored observations
@@ -95,7 +97,6 @@ def hc_ppoints_uncen(obs, cens, cn):
             k = P[i+1]
         pp_x = [(1 - P[i]) + ((P[i] - k) * R[r]) / (A[i] + 1) for r in range(0, len(R))]
         pp.append(pp_x)
-
     pp = numpy.array(pp)
     pp = numpy.hstack(pp)
     return(pp)
@@ -103,8 +104,8 @@ def hc_ppoints_uncen(obs, cens, cn):
 # hc_ppoints_cen calculates censored plotting positions
 def hc_ppoints_cen(obs, cens, cn):
     #insert defensive stuff here
-    obs = numpy.array(obs)
-    cens = numpy.array(cens)
+    #obs = numpy.array(obs)
+    #cens = numpy.array(cens)
     C = cn[2]
     P = cn[3]
     limit = cn[4]
@@ -124,11 +125,13 @@ def hc_ppoints_cen(obs, cens, cn):
 
 # hcPoints calculates plotting positions using above functions
 def hcPoints(obs, cens):
-# insert defensive algorythm here or before?
+    #print ("HELLO")
+    import pandas as pd
+    # insert defensive algorythm here or before?
     assert len(obs) == len(cens)
-    cens = numpy.bool8(cens)
-    obs = numpy.array(obs)
-    pp = numpy.random.rand(len(obs))
+    #cens = numpy.bool8(cens)
+    #obs = numpy.array(obs)
+    pp = pd.Series(numpy.random.rand(len(obs)))
     if not any(cens):
         pp = ppoints(obs)
     else:
@@ -137,4 +140,5 @@ def hcPoints(obs, cens):
         pp[numpy.logical_not(cens)] = hcPPointsUncen
         hcPPointsCen = hc_ppoints_cen(obs, cens, cn)
         pp[cens] = hcPPointsCen
+        pp = pd.Series(pp)
     return(pp)

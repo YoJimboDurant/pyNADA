@@ -10,7 +10,7 @@ from scipy import stats
 import pandas as pd
 
 import hcPoints
-import pyNADA.entry.plugin
+#import pyNADA.entry.plugin
 
 # ros is basic skeleton at this point. It needs flexible transformation added, but for now
 # it uses natural log for foward transformation and exponent for reverse.
@@ -43,17 +43,17 @@ def ros(obs, cens):
     modeled[cens] = predicted
     return(modeled)
 
-class ROSEntry(pyNADA.entry.plugin.Plugin):
-    @classmethod
-    def registerSubparser(cls, parent):
-        import argparse # forces minimum python version of 2.7
+# class ROSEntry(pyNADA.entry.plugin.Plugin):
+#     @classmethod
+#     def registerSubparser(cls, parent):
+#         import argparse # forces minimum python version of 2.7
 
-        parser = parent.add_parser('ros', help='Run ros from the command line')
-        parser.set_defaults(subcommand=ROSEntry())
+#         parser = parent.add_parser('ros', help='Run ros from the command line')
+#         parser.set_defaults(subcommand=ROSEntry())
 
-        parser.add_argument('files', nargs='*', help='CSV files containing the observations or - for stdin.')
-        parser.add_argument('--selector', dest='selector', default='*',
-            help='A glob pattern that is used to select rows by the "sample number" column.')
+#         parser.add_argument('files', nargs='*', help='CSV files containing the observations or - for stdin.')
+#         parser.add_argument('--selector', dest='selector', default='*',
+#             help='A glob pattern that is used to select rows by the "sample number" column.')
 
     def __call__(self, args):
         import csv
